@@ -1,0 +1,31 @@
+---
+- name: Configure dcos installer on bootstrap node
+  hosts: localhost
+  become: yes
+  become_user: root
+  become_method: sudo
+  gather_facts: no
+  connection: local
+  tasks:
+    - include: tasks/setup_bootstrap_node.yml
+
+- name: Create and launch master instances
+  hosts: localhost
+  become: yes
+  become_user: root
+  become_method: sudo
+  gather_facts: no
+  connection: local
+  tasks:
+    - include: tasks/create_master_instances.yml
+    - pause: seconds=20
+
+- name: initialise master dcos nodes
+  hosts: masters
+  become: yes
+  become_user: root
+  become_method: sudo
+  serial: 2
+  tasks:
+    - include: tasks/configure_master_dcos_nodes.yml
+

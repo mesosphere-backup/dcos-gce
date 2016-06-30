@@ -1,0 +1,113 @@
+---
+- name: Create agent instances
+  hosts: localhost
+  become: yes
+  become_user: root
+  gather_facts: no
+  connection: local
+  tasks:
+    - name: remove agents from known_hosts file
+      command: /usr/bin/ssh-keygen -R {{ item }} 
+      with_sequence: start={{ start_id }} end={{ end_id }} format=agent%04x
+
+    - name: launch agent instances
+      command: "{{ gcloudbin }} compute --project {{ project }} instances create {{ item }} --zone {{ zone }} --machine-type {{ agent_machine_type }} 
+               --subnet {{ subnet }}  --maintenance-policy \"TERMINATE\" --preemptible --tags \"{{agent_type}}agent\" --scopes {{ scopes }} 
+               --image {{ image }} --boot-disk-size 10 
+               --boot-disk-type pd-standard --boot-disk-device-name boot"
+      with_sequence: start={{ start_id }} end={{ end_id }} format=agent%04x
+      register: vm_instances
+      async: 7200
+      poll: 0
+     
+    - name: wait for instance creation to complete
+      async_status: jid={{ item.ansible_job_id }}
+      register: instances_jobs
+      until: instances_jobs.finished
+      retries: 300
+      with_items: "{{ vm_instances.results }}"
+
+- name: start dcos bootstrap container
+  hosts: localhost
+  gather_facts: no
+  become: yes
+  become_user: root
+  connection: local
+  tasks:
+    - name: ensure dcos installer container is started
+      docker_container:
+        name: "{{ dcos_bootstrap_container }}"
+        state: started
+
+    - pause: seconds=10
+
+- name: Install dcos on nodes
+  hosts: agents[{{start_id}}:{{ end_id }}]
+  become: yes
+  become_user: root
+  gather_facts: no
+  tasks: 
+    - name: create tmp directory
+      file: dest=/tmp/dcos state=directory
+
+    - name: install dependencies
+      yum: name="{{ item  }}" state=present
+      with_items:
+        - unzip
+        - ipset
+
+    - name: add group nogroup
+      group: name=nogroup state=present
+
+    - name: disable selinux
+      selinux: state=disabled
+
+    - name: restart host
+      shell: sleep 1;/usr/sbin/reboot
+      async: 1
+      poll: 0
+      ignore_errors: true
+
+    - name: waiting for host to come back online
+      local_action: wait_for host={{ inventory_hostname }} search_regex=OpenSSH port=22 timeout=300 state=started
+
+    - name: Add docker repository
+      yum_repository:
+        name: dockerrepo
+        description: Docker Respository
+        baseurl: https://yum.dockerproject.org/repo/main/centos/$releasever/
+        state: present
+        enabled: yes
+        gpgcheck: yes
+        gpgkey: https://yum.dockerproject.org/gpg
+
+    - pause: seconds=1
+
+    - name: install docker
+      yum: name=docker-engine state=present
+
+    - name: copy docker config for overlayfs
+      copy: src=files/docker.service dest=/usr/lib/systemd/system
+
+    - name: reload sytemd
+      command: /usr/bin/systemctl daemon-reload
+
+    - name: start docker
+      service: name=docker state=started
+
+# following needs to have serial: 2
+    - name: fetch installer from bootstrap
+      get_url: url=http://{{ bootstrap_public_ip }}:{{ bootstrap_public_port }}/dcos_install.sh dest=/tmp/dcos mode="u=rwx,g=rwx,o=rwx"
+
+# configure master nodes
+    - name: install dcos on private agent
+      command: bash dcos_install.sh slave
+      args:
+        chdir: /tmp/dcos
+      when: agent_type == 'private'
+
+    - name: install dcos on public agent
+      command: bash dcos_install.sh slave_public
+      args:
+        chdir: /tmp/dcos
+      when: agent_type == 'public'

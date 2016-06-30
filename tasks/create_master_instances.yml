@@ -1,0 +1,31 @@
+---
+
+    - name: remove masters from known_hosts file
+      command: /usr/bin/ssh-keygen -R {{ hostvars[item].inventory_hostname }}
+      with_items:
+        - "{{ groups['masters'] }}"
+ 
+    - name : remove  masters IP from known_hosts file
+      command: /usr/bin/ssh-keygen -R {{ hostvars[item]['ip'] }}
+      with_items:
+        - "{{ groups['masters'] }}"
+ 
+    - name: Create and launch masters
+      command: "{{ gcloudbin }} compute --project {{ project }} instances create {{ hostvars[item].inventory_hostname }}
+             --zone {{ zone }} --machine-type {{ master_machine_type }} --subnet {{ subnet }}
+             --private-network-ip  {{ hostvars[item]['ip'] }} --maintenance-policy "MIGRATE"  --tags \"master\"
+             --scopes default=https://www.googleapis.com/auth/cloud-platform --image {{ image }}
+             --boot-disk-size {{ master_boot_disk_size }} --boot-disk-type pd-standard
+             --boot-disk-device-name {{ hostvars[item].inventory_hostname }}-boot"
+      with_items:
+        - "{{ groups['masters'] }}" 
+      register: master_instances
+      async: 7200
+      poll: 0
+
+    - name: wait for master instance creation to complete
+      async_status: jid={{ item.ansible_job_id }}
+      register: master_instance_jobs
+      until : master_instance_jobs.finished
+      retries: 300
+      with_items: "{{ master_instances.results }}"

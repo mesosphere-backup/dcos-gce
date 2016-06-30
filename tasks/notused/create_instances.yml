@@ -1,0 +1,37 @@
+---
+    - name: Create and launch masters
+      command: "{{ gcloudbin }} compute --project {{ project }} instances create {{ hostvars[item].inventory_hostname }}
+             --zone {{ zone }} --machine-type {{ master_machine_type }} --subnet {{ subnet }}
+             --private-network-ip  {{ hostvars[item]['ip'] }} --maintenance-policy \"TERMINATE\" --preemptible  --tags \"master\"
+             --scopes default=https://www.googleapis.com/auth/cloud-platform --image {{ image }}
+             --boot-disk-size {{ master_boot_disk_size }} --boot-disk-type pd-standard
+             --boot-disk-device-name {{ hostvars[item].inventory_hostname }}-boot"
+      with_items:
+       - "{{ groups['masters'] }}" 
+      register: master_instances
+      async: 7200
+      poll: 0
+
+    - name: wait for master instance creation to complete
+      async_status: jid={{ item.ansible_job_id }}
+      register: master_instance_jobs
+      until : master_instance_jobs.finished
+      retries: 300
+      with_items: "{{ master_instances.results }}"
+
+    - name: launch agent instances
+      command: "{{ gcloudbin }} compute --project {{ project }} instances create {{ item }} --zone {{ zone }} --machine-type {{ agent_machine_type }} 
+               --subnet {{ subnet }}  --maintenance-policy \"TERMINATE\" --preemptible --tags \"privateagent\" --scopes {{ scopes }} 
+               --image {{ image }} --boot-disk-size 10 
+               --boot-disk-type pd-standard --boot-disk-device-name boot"
+      with_sequence: start=0 end={{ (number_of_agents - 1) }} format=agent%04x
+      register: vm_instances
+      async: 7200
+      poll: 0
+     
+    - name: wait for instance creation to complete
+      async_status: jid={{ item.ansible_job_id }}
+      register: instances_jobs
+      until: instances_jobs.finished
+      retries: 300
+      with_items: "{{ vm_instances.results }}"

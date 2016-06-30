@@ -1,0 +1,12 @@
+---
+bootstrap_url: http://{{ bootstrap_public_ip }}:{{ bootstrap_public_port }}
+cluster_name: {{ cluster_name }}
+exhibitor_storage_backend: static
+ip_detect_filename: /genconf/ip-detect
+master_list:
+{% for master in groups['masters'] %}
+- {{ hostvars[master]['ip'] }}
+{% endfor %}
+resolvers:
+- 8.8.4.4
+- 8.8.8.8

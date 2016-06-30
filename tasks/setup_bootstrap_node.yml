@@ -1,0 +1,37 @@
+---
+    - name: create directory genconf
+      file: dest="{{ home_directory }}/genconf" state=directory
+
+    - name: copy config
+      template: src=template/config.yaml dest="{{ home_directory }}/genconf"
+
+    - name: copy ipdetect
+      template: src=template/ip-detect dest="{{ home_directory }}/genconf"  mode="u=rwx,g=rwx,o=rwx"
+
+    - name: check presence of dcos installer
+      stat: path="{{ home_directory }}/{{ dcos_installer_filename }}"
+      register: dcos_installer_state
+
+    - name: get dcos installer
+      get_url: url={{ dcos_installer_download_path }} dest=~ mode="u=rwx,g=rwx,o=rwx"
+      when: dcos_installer_state.stat.islnk is not defined
+
+    - name: stop docker
+      service: name=docker state=stopped
+
+    - name: ensure docker is running
+      service: name=docker state=started
+
+    - name: Generate customised build file
+      command: "{{ home_directory }}/{{ dcos_installer_filename }}"
+      args:
+       chdir: "{{ home_directory }}" 
+#    need a when statement here
+
+    - name: start docker container
+      docker_container:
+        name: "{{ dcos_bootstrap_container }}"
+        image: nginx 
+        state: started
+        volumes: "{{ home_directory }}/genconf/serve:/usr/share/nginx/html:ro"
+        ports: "{{ bootstrap_public_port }}:80"

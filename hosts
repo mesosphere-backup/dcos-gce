@@ -1,0 +1,8 @@
+[masters]
+master0 ip=10.132.0.3
+
+[agents]
+agent[0000:9999]
+
+[bootstrap]
+bootstrap

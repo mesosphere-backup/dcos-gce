@@ -1,0 +1,27 @@
+---
+number_of_agents: 3
+gcloudbin: /usr/local/bin/gcloud
+project: trek-trackr
+subnet: default-6f68d4d6fabcb680
+zone: europe-west1-d
+master_boot_disk_size: 10
+image: '/centos-cloud/centos-7-v20160606'
+disk_type: pd-standard
+boot_disk_size: 10
+master_machine_type: n1-standard-1
+bootstrap_public_ip: 10.132.0.2
+bootstrap_public_port: 8080
+cluster_name: cluster_name
+agent_machine_type: n1-standard-1
+scopes: "default=https://www.googleapis.com/auth/cloud-platform"
+dcos_installer_filename: dcos_generate_config.sh
+dcos_installer_download_path: "https://downloads.dcos.io/dcos/EarlyAccess/{{ dcos_installer_filename }}"
+login_name: ajazam
+home_directory: "/home/{{ login_name }}"
+downloads_from_bootstrap: 2
+start_id: 0001
+end_id: 0001
+dcos_bootstrap_container: dcosinstaller
+agent_instance_type: "MIGRATE"
+master_instance_type: "MIGRATE"
+agent_type: private

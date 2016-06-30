@@ -1,0 +1,97 @@
+---
+- name: configure hosts
+  hosts: tag_master,tag_privateagent,tag_publicagent
+  become: yes
+  gather_facts: no
+  tasks:
+    - name: create tmp directory
+      file: dest=/tmp/dcos state=directory
+
+    - name: install dependencies
+      yum: name={{ item  }} state=present
+      with_items:
+        - unzip
+        - ipset
+
+    - name: add group nogroup
+      group: name=nogroup state=present
+
+    - name: disable selinux
+      selinux: state=disabled
+
+    - name: restart host
+      shell: sleep 1;/usr/sbin/reboot
+      async: 1
+      poll: 0
+      ignore_errors: true
+
+    - name: waiting for host to come back online
+      local_action: wait_for host={{ inventory_hostname }} search_regex=OpenSSH port=22 timeout=300 state=started
+
+#    - name: update yum packages
+#      yum: update_cache=yes state=present
+
+    - name: Add docker repository
+      yum_repository:
+        name: dockerrepo
+        description: Docker Respository
+        baseurl: https://yum.dockerproject.org/repo/main/centos/$releasever/
+        state: present
+        enabled: yes
+        gpgcheck: yes
+        gpgkey: https://yum.dockerproject.org/gpg
+
+    - pause: seconds=1
+
+    - name: install docker
+      yum: name=docker-engine state=present
+
+    - name: copy docker config for overlayfs
+      copy: src=files/docker.service dest=/usr/lib/systemd/system
+
+    - name: reload sytemd
+      command: /usr/bin/systemctl daemon-reload
+
+    - name: start docker
+      service: name=docker state=started
+
+
+
+- name: fetch dcos installer
+  hosts: tag_master,tag_privateagent,tag_publicagent
+  become: yes
+  gather_facts: no
+  serial: 2
+  tasks:
+    - name: fetch installer from bootstrap
+      get_url: url=http://{{ bootstrap_public_ip }}:{{ bootstrap_public_port }}/dcos_install.sh dest=/tmp/dcos mode="u=rwx,g=rwx,o=rwx" 
+  
+- name: configure master nodes with dcos
+  hosts: tag_master
+  become: yes
+  gather_facts: no
+  tasks:
+    - name: install dcos on master
+      command: bash dcos_install.sh master
+      args:
+        chdir: /tmp/dcos
+
+- name: configure private agent nodes with dcos
+  hosts: tag_privateagent
+  become: yes
+  gather_facts: no
+  tasks:
+    - name: install dcos on private agents
+      command: bash dcos_install.sh slave
+      args:
+        chdir: /tmp/dcos
+
+- name: configure public agent nodes with dcos
+  hosts: tag_publicagent
+  become: yes
+  gather_facts: no
+  tasks:
+    - name: install dcos on public nodes
+      command: bash dcos_install.sh slave_public
+      args:
+        chdir: /tmp/dcos 
