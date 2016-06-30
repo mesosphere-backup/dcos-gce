@@ -1,4 +1,4 @@
-###DCOS on Google Compute Engine
+#DCOS on Google Compute Engine
 
 This repository contains scripts to configure a DC/OS cluster on Google Compute Engine.
 
@@ -13,11 +13,11 @@ zone europe-west1-d.
 
 After creating the micro instance start the instance and run the following from the shell
 ```bash
-> gcloud components update
-> sudo yum update
-> sudo yum install python-pip
-> sudo pip install -U pip
-> sudo pip install apache-libcloud docker-py ansible
+gcloud components update
+sudo yum update
+sudo yum install python-pip
+sudo pip install -U pip
+sudo pip install apache-libcloud docker-py ansible
 ```
 
 You need to create the rsa public/private keypairs to allow passwordless logins via SSH to the nodes of the DC/OS cluster. This is required by ansible to create the cluster nodes and 
@@ -25,33 +25,33 @@ install DC/OS on the nodes.
 
 Run the following to generate the keys
 ```bash
-> ssh-keygen -t rsa -f ~/.ssh/id_rsa -C ajazam
+ssh-keygen -t rsa -f ~/.ssh/id_rsa -C ajazam
 ```
 Please replace ajazam with your username
 
 Add the rsa public key to your project
 ```bash
-> chmod 400 ~/.ssh/id_rsa
-> gcloud compute project-info add-metadata --metadata-from-file sshKeys=~/.ssh/id_rsa.pub
+chmod 400 ~/.ssh/id_rsa
+gcloud compute project-info add-metadata --metadata-from-file sshKeys=~/.ssh/id_rsa.pub
 ```
 Install docker
 ```bash
-> curl -fsSL https://get.docker.com/ | sh
-> sudo usermod -aG docker ajazam
+curl -fsSL https://get.docker.com/ | sh
+sudo usermod -aG docker ajazam
 ```
 Please replace ajazam with your username
 
 Start docker
 ```bash
-> sudo service docker start
+sudo service docker start
 ```
 To create and configure the master nodes run
 ```bash
-> ansible-playbook -i hosts install.yml
+ansible-playbook -i hosts install.yml
 ```
 To create and configure the private nodes run
 ```bash
-> ansible-playbook -i hosts add_agent --extra-vars "start_id=0001 end_id=0002 agent_type=private"
+ansible-playbook -i hosts add_agent --extra-vars "start_id=0001 end_id=0002 agent_type=private"
 ```
 start_id=0001 and end_id=0002 specify the range of id's that are appended to the hostname "agent" to create unique agent names. If start_is is not specifiec then a default of 0001 is used. 
 If the end_id is not specified then a default of 0001 is used.
@@ -60,19 +60,19 @@ The values for agent_type are either private or public. If an agent_type is not 
 
 To create public nodes type
 ```bash
-> ansibe-playbook ii hosts add_agent --extra-vars "start_id=0003 end_id=0004 agent_type=public"
+ansibe-playbook ii hosts add_agent --extra-vars "start_id=0003 end_id=0004 agent_type=public"
 ```
-#Configurable parameters
+##Configurable parameters
 
 File './hosts'
 In an ansible inventory file text wrapped by [] represents a group name and individual entries after the group name represent hosts in that group.
-The [[masters]] group contains nodes names and IP addresses for the master nodes. In the supplied file the host name is master0 and the ip address 10.132.0.3 is used. 
+The [masters] group contains nodes names and IP addresses for the master nodes. In the supplied file the host name is master0 and the ip address 10.132.0.3 is used. 
 You will have to change this for your network.
 
-The [[agents]] group has one entry. It specifies the names of all the agents one can have in the DC/OS cluster. The values specifies that agent0000 to agent9999, a 
+The [agents] group has one entry. It specifies the names of all the agents one can have in the DC/OS cluster. The values specifies that agent0000 to agent9999, a 
 total of 10,000 agents are allowed. This really is an artificial because it can easily be changed.
 
-The [[bootstrap]] group has the name of the bootstrap node.
+The [bootstrap] group has the name of the bootstrap node.
 
 File './group_vars/all'
 This contains miscellaneous parameters that will change the behaviour of the installation scripts
