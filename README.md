@@ -4,9 +4,11 @@ This repository contains scripts to configure a DC/OS cluster on Google Compute 
 
 A bootstrap node is required to run the scripts and to bootstrap the DC/OS cluster.
 
+**PLEASE READ THE ENTIRE DOCUMENT. YOU MUST MAKE CHANGES FOR THE SCRIPTS TO WORK IN YOUR GCE ENVIRONMENT.**
+
 ##Bootstrap node configuration
 
-You must create a projection using the google cloud console. The author created a project called trek-treckr
+**YOU MUST CREATE A PROJECT** using the google cloud console. The author created a project called trek-treckr
 
 You can create the bootstrap node using the google cloud console. The author used a f1-micro instance running centos with a 50 GB persistent disk in 
 zone europe-west1-d.
@@ -27,7 +29,7 @@ Run the following to generate the keys
 ```bash
 ssh-keygen -t rsa -f ~/.ssh/id_rsa -C ajazam
 ```
-Please replace ajazam with your username
+**PLEASE REPLACE ajazam** with your username
 
 Add the rsa public key to your project
 ```bash
@@ -39,7 +41,7 @@ Install docker
 curl -fsSL https://get.docker.com/ | sh
 sudo usermod -aG docker ajazam
 ```
-Please replace ajazam with your username
+**PLEASE REPLACE ajazam** with your username
 
 Start docker
 ```bash
@@ -53,7 +55,7 @@ To create and configure the private nodes run
 ```bash
 ansible-playbook -i hosts add_agent --extra-vars "start_id=0001 end_id=0002 agent_type=private"
 ```
-start_id=0001 and end_id=0002 specify the range of id's that are appended to the hostname "agent" to create unique agent names. If start_is is not specifiec then a default of 0001 is used. 
+start_id=0001 and end_id=0002 specify the range of id's that are appended to the hostname "agent" to create unique agent names. If start_id is not specified then a default of 0001 is used. 
 If the end_id is not specified then a default of 0001 is used.
 The values for agent_type are either private or public. If an agent_type is not specified then it is assumed agent_type is private.
 
@@ -64,26 +66,24 @@ ansibe-playbook -i hosts add_agent --extra-vars "start_id=0003 end_id=0004 agent
 ```
 ##Configurable parameters
 
-File './hosts'
-In an ansible inventory file text wrapped by [] represents a group name and individual entries after the group name represent hosts in that group.
-The [masters] group contains nodes names and IP addresses for the master nodes. In the supplied file the host name is master0 and the ip address 10.132.0.3 is used. 
-You will have to change this for your network.
+File './hosts' is an ansible inventory file. Text wrapped by [] represents a group name and individual entries after the group name represent hosts in that group.
+The [masters] group contains node names and IP addresses for the master nodes. In the supplied file the host name is master0 and the ip address 10.132.0.3 is assigned to 
+master0. You will have to change this for your network.
 
-The [agents] group has one entry. It specifies the names of all the agents one can have in the DC/OS cluster. The values specifies that agent0000 to agent9999, a 
-total of 10,000 agents are allowed. This really is an artificial because it can easily be changed.
+The [agents] group has one entry. It specifies the names of all the agents one can have in the DC/OS cluster. The value specifies that agent0000 to agent9999, a 
+total of 10,000 agents are allowed. This really is an artificial limit because it can easily be changed.
 
 The [bootstrap] group has the name of the bootstrap node.
 
-File './group_vars/all'
-This contains miscellaneous parameters that will change the behaviour of the installation scripts
+File './group_vars/all' contains miscellaneous parameters that will change the behaviour of the installation scripts
 ```text
 project
 ```
-You must change thos this to your project name. Default: trek-trackr
+**YOU MUST CHANGE THIS** to your project name. Default: trek-trackr
 ```text
 subnet
 ```
-You must change this for your network. default-6f68d4d6fabcb680
+**YOU MUST CHANGE THIS** for your network. Default: default-6f68d4d6fabcb680
 ```text
 zone
 ```
@@ -123,7 +123,7 @@ The name of the DC/OS cluster. Default: cluster_name
 ```text
 agent_machine_type
 ```
-The GCE instance tpe used for the agent nodes. Default: n1-standard-1
+The GCE instance type used for the agent nodes. Default: n1-standard-1
 ```text
 scopes
 ```
@@ -139,7 +139,7 @@ The location of where the dcos installer is available from dcos.io. Default: htt
 ```text
 login_name
 ```
-The login name used for accessing each GCE instance. YOU MUST CHANGE THIS. Default: ajazam
+The login name used for accessing each GCE instance. **YOU MUST CHANGE THIS**. Default: ajazam
 ```text
 home_directory
 ```
@@ -147,15 +147,15 @@ The home directory for your logins. Default: /home/{{ login_name }} The value of
 ```text
 downloads_from_bootstrap
 ```
-The concurrent downloads of the dcos installer to the cluster of master and agent nodes. Required concurrent downloads can be done but the bootstrap node does not get overwhelmed. You may need to experiment with this to get the best value for your bootstrap node.
+The concurrent downloads of the dcos installer to the cluster of master and agent nodes. You may need to experiment with this to get the best performance. The performance will be a function of the machine type used for the bootstrap node. Default: 2
 ```text
 start_id
 ```
-The number appended to the text agent is used to define the hostname of the first agent. e.g. agent0001. Default: 0001
+The number appended to the text *agent* is used to define the hostname of the first agent. e.g. agent0001. Intermediate agents between start_id and end_id will be created if required. Default: 0001
 ```text
 end_id
 ```
-The number appended to the text agent is used to define the hostname of the last agent. e.g. agent0001. Default: 0001
+The number appended to the text *agent* is used to define the hostname of the last agent. e.g. agent0001. Intermediate agents between start_id and end_id will be created if required. Default: 0001
 ```text
 dcos_bootstrap_container
 ```
