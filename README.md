@@ -68,7 +68,7 @@ ansibe-playbook -i hosts add_agent --extra-vars "start_id=0003 end_id=0004 agent
 
 File './hosts' is an ansible inventory file. Text wrapped by [] represents a group name and individual entries after the group name represent hosts in that group.
 The [masters] group contains node names and IP addresses for the master nodes. In the supplied file the host name is master0 and the ip address 10.132.0.3 is assigned to 
-master0. You will have to change this for your network.
+master0. YOU MUST CHANGE the IP address for master0 for your network. You can create multiple entries e.g. master1, master2 etc. Each node must have a unique IP address.
 
 The [agents] group has one entry. It specifies the names of all the agents one can have in the DC/OS cluster. The value specifies that agent0000 to agent9999, a 
 total of 10,000 agents are allowed. This really is an artificial limit because it can easily be changed.
