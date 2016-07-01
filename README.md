@@ -59,7 +59,6 @@ start_id=0001 and end_id=0002 specify the range of id's that are appended to the
 If the end_id is not specified then a default of 0001 is used.
 The values for agent_type are either private or public. If an agent_type is not specified then it is assumed agent_type is private.
 
-
 To create public nodes type
 ```bash
 ansibe-playbook -i hosts add_agent --extra-vars "start_id=0003 end_id=0004 agent_type=public"
@@ -75,95 +74,123 @@ total of 10,000 agents are allowed. This really is an artificial limit because i
 
 The [bootstrap] group has the name of the bootstrap node.
 
-File './group_vars/all' contains miscellaneous parameters that will change the behaviour of the installation scripts
+File './group_vars/all' contains miscellaneous parameters that will change the behaviour of the installation scripts. The parameters are split into two groups. Group 1 parameters must be changed to reflect your environment. Group 2 parameters can optionally be changed to change the behaviour of the scripts.
+
+###Group 1 parameters YOU MUST CHANGE for your environment
+
 ```text
 project
 ```
-**YOU MUST CHANGE THIS** to your project name. Default: trek-trackr
+Your your project name. Default: trek-trackr
+
 ```text
 subnet
 ```
-**YOU MUST CHANGE THIS** for your network. Default: default-6f68d4d6fabcb680
+Your network. Default: default-6f68d4d6fabcb680
+
 ```text
-zone
+login_name
 ```
-You may change this to your preferred zone. Default: europe-west1-d
-```text
-master_boot_disk_size:
-```
-The size of the master node boot disk. Default 10 GB
-```text
-image
-```
-The disk image used on the master and agent. Default: /centos-cloud/centos-7-v20160606
-```text
-disk_type
-```
-The disk type used for the master and agent nodes. Default: pd-standard
-```text
-boot_disk_size
-```
-The boot disk size used on the master and agent nodes. Default: 10 GB
-```text
-master_machine_type
-```
-The GCE instance type used for the master nodes. Default: n1-standard-1
+The login name used for accessing each GCE instance. Default: ajazam
+
 ```text
 bootstrap_public_ip
 ```
 The bootstrap nodes public IP. Default: 10.132.0.2
+
+```text
+zone
+```
+You may change this to your preferred zone. Default: europe-west1-d
+
+
+###Group 2 parameters which optionally change the behaviour of the installation scripts
+
+```text
+master_boot_disk_size:
+```
+The size of the master node boot disk. Default 10 GB
+
+```text
+image
+```
+The disk image used on the master and agent. Default: /centos-cloud/centos-7-v20160606
+
+```text
+disk_type
+```
+The disk type used for the master and agent nodes. Default: pd-standard
+
+```text
+boot_disk_size
+```
+The boot disk size used on the master and agent nodes. Default: 10 GB
+
+```text
+master_machine_type
+```
+The GCE instance type used for the master nodes. Default: n1-standard-1
+
 ```text
 bootstrap_public_port
 ```
 The port on the bootstrap node which is used to fetch the dcos installer from each of the master and agent nodes. Default: 8080
+
 ```text
 cluster_name
 ```
 The name of the DC/OS cluster. Default: cluster_name
+
 ```text
 agent_machine_type
 ```
 The GCE instance type used for the agent nodes. Default: n1-standard-1
+
 ```text
 scopes
 ```
 Don't change this. Required by the google cloud SDK
+
 ```text
 dcos_installer_filename
 ```
 The filename for the DC/OS installer. Default dcos_generate_config.sh
+
 ```text
 dcos_installer_download_path
 ```
 The location of where the dcos installer is available from dcos.io. Default: https://downloads.dcos.io/dcos/EarlyAccess/{{ dcos_installer_filename }} The value of {{ dcos_installer_file }} is described above.
-```text
-login_name
-```
-The login name used for accessing each GCE instance. **YOU MUST CHANGE THIS**. Default: ajazam
+
 ```text
 home_directory
 ```
 The home directory for your logins. Default: /home/{{ login_name }} The value of {{ login_name }} is described above.
+
 ```text
 downloads_from_bootstrap
 ```
 The concurrent downloads of the dcos installer to the cluster of master and agent nodes. You may need to experiment with this to get the best performance. The performance will be a function of the machine type used for the bootstrap node. Default: 2
+
 ```text
 start_id
 ```
 The number appended to the text *agent* is used to define the hostname of the first agent. e.g. agent0001. Intermediate agents between start_id and end_id will be created if required. Default: 0001
+
 ```text
 end_id
 ```
 The number appended to the text *agent* is used to define the hostname of the last agent. e.g. agent0001. Intermediate agents between start_id and end_id will be created if required. Default: 0001
+
 ```text
 dcos_bootstrap_container
 ```
 Holds the name of the dcos bootstrap container running on the bootstrap node. Default: dcosinstaller
+
 ```text
 agent_instance_type
 ```
 Allows agents to be preemptible. If the value is "MIGRATE" then they are not preemptible. If the value is '"TERMINATE" --preemptible' then the instance is preemptible. Default: "MIGRATE"
+
 ```text
 agent_type
 ```
