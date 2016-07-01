@@ -13,8 +13,8 @@
     - name: launch agent instances
       command: "{{ gcloudbin }} compute --project {{ project }} instances create {{ item }} --zone {{ zone }} --machine-type {{ agent_machine_type }} 
                --subnet {{ subnet }}  --maintenance-policy \"TERMINATE\" --preemptible --tags \"{{agent_type}}agent\" --scopes {{ scopes }} 
-               --image {{ image }} --boot-disk-size 10 
-               --boot-disk-type pd-standard --boot-disk-device-name boot"
+               --image {{ image }} --boot-disk-size {{ agent_boot_disk_size }} 
+               --boot-disk-type {{ agent_boot_disk_type }} --boot-disk-device-name boot"
       with_sequence: start={{ start_id }} end={{ end_id }} format=agent%04x
       register: vm_instances
       async: 7200

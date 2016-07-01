@@ -12,23 +12,37 @@ zone: europe-west1-d
 
 
 
-gcloudbin: /usr/local/bin/gcloud
-
 master_boot_disk_size: 10
 
-image: '/centos-cloud/centos-7-v20160606'
-
-disk_type: pd-standard
-
-boot_disk_size: 10
-
 master_machine_type: n1-standard-1
+
+master_boot_disk_type: pd-standard
+
+
+agent_boot_disk_size: 10
+
+agent_machine_type: n1-standard-1
+
+agent_boot_disk_type: pd-standard
+
+agent_instance_type: "MIGRATE"
+
+agent_type: private
+
+start_id: 0001
+
+end_id: 0001
+
+
+
+
+gcloudbin: /usr/local/bin/gcloud
+
+image: '/centos-cloud/centos-7-v20160606'
 
 bootstrap_public_port: 8080
 
 cluster_name: cluster_name
-
-agent_machine_type: n1-standard-1
 
 scopes: "default=https://www.googleapis.com/auth/cloud-platform"
 
@@ -40,16 +54,11 @@ home_directory: "/home/{{ login_name }}"
 
 downloads_from_bootstrap: 2
 
-start_id: 0001
-
-end_id: 0001
-
 dcos_bootstrap_container: dcosinstaller
 
-agent_instance_type: "MIGRATE"
 
-master_instance_type: "MIGRATE"
 
-agent_type: private
 
-agent_boot_disk_size: 10
+
+
+

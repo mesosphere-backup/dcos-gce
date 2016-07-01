@@ -112,24 +112,60 @@ master_boot_disk_size:
 The size of the master node boot disk. Default 10 GB
 
 ```text
-image
-```
-The disk image used on the master and agent. Default: /centos-cloud/centos-7-v20160606
-
-```text
-disk_type
-```
-The disk type used for the master and agent nodes. Default: pd-standard
-
-```text
-boot_disk_size
-```
-The boot disk size used on the master and agent nodes. Default: 10 GB
-
-```text
 master_machine_type
 ```
 The GCE instance type used for the master nodes. Default: n1-standard-1
+
+```text
+master_boot_disk_type
+```
+The master boot disk type. Default: pd-standard
+
+```text
+agent_boot_disk_size
+```
+The size of the agent boot disk. Default 10 GB
+
+```text
+agent_machine_type
+```
+The GCE instance type used for the agent nodes. Default: n1-standard-1
+
+```text
+agent_boot_disk_type
+```
+The agent boot disk type. Default: pd-standard
+
+```text
+agent_instance_type
+```
+Allows agents to be preemptible. If the value is "MIGRATE" then they are not preemptible. If the value is '"TERMINATE" --preemptible' then the instance is preemptible. Default: "MIGRATE"
+
+```text
+agent_type
+```
+Can specify whether an agent is "public" or "private". Default: "private"
+
+```text
+start_id
+```
+The number appended to the text *agent* is used to define the hostname of the first agent. e.g. agent0001. Intermediate agents between start_id and end_id will be created if required. Default: 0001
+
+```text
+end_id
+```
+The number appended to the text *agent* is used to define the hostname of the last agent. e.g. agent0001. Intermediate agents between start_id and end_id will be created if required. Default: 0001
+
+
+```text
+gcloudbin
+```
+The location of the gcloudbin binary. Default: /usr/local/bin/gcloud
+
+```text
+image
+```
+The disk image used on the master and agent. Default: /centos-cloud/centos-7-v20160606
 
 ```text
 bootstrap_public_port
@@ -140,11 +176,6 @@ The port on the bootstrap node which is used to fetch the dcos installer from ea
 cluster_name
 ```
 The name of the DC/OS cluster. Default: cluster_name
-
-```text
-agent_machine_type
-```
-The GCE instance type used for the agent nodes. Default: n1-standard-1
 
 ```text
 scopes
@@ -172,26 +203,10 @@ downloads_from_bootstrap
 The concurrent downloads of the dcos installer to the cluster of master and agent nodes. You may need to experiment with this to get the best performance. The performance will be a function of the machine type used for the bootstrap node. Default: 2
 
 ```text
-start_id
-```
-The number appended to the text *agent* is used to define the hostname of the first agent. e.g. agent0001. Intermediate agents between start_id and end_id will be created if required. Default: 0001
-
-```text
-end_id
-```
-The number appended to the text *agent* is used to define the hostname of the last agent. e.g. agent0001. Intermediate agents between start_id and end_id will be created if required. Default: 0001
-
-```text
 dcos_bootstrap_container
 ```
 Holds the name of the dcos bootstrap container running on the bootstrap node. Default: dcosinstaller
 
-```text
-agent_instance_type
-```
-Allows agents to be preemptible. If the value is "MIGRATE" then they are not preemptible. If the value is '"TERMINATE" --preemptible' then the instance is preemptible. Default: "MIGRATE"
 
-```text
-agent_type
-```
-Can specify whether an agent is "public" or "private". Default: "private"
+
+
