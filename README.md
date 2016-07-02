@@ -119,10 +119,10 @@ git clone https://github.com/ajazam/dcos-gce
 
 change directory
 ```bash
-cd dce-gce
+cd dcos-gce
 ```
 
-Please make appropriate changes to dcos/gce/group_vars/all
+Please make appropriate changes to dcos/gce/group_vars/all. You need to review project, subnet, login_name, bootstrap_public_ip & zone
 
 insert following into ~/.ansible.cfg to stop host key checking
 ```bash
@@ -150,7 +150,7 @@ The values for agent_type are either private or public. If an agent_type is not 
 
 To create public nodes type
 ```bash
-ansibe-playbook -i hosts add_agents.yml --extra-vars "start_id=0003 end_id=0004 agent_type=public"
+ansible-playbook -i hosts add_agents.yml --extra-vars "start_id=0003 end_id=0004 agent_type=public"
 ```
 ##Configurable parameters
 
