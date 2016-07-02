@@ -4,16 +4,18 @@
       command: /usr/bin/ssh-keygen -R {{ hostvars[item].inventory_hostname }}
       with_items:
         - "{{ groups['masters'] }}"
+      ignore_errors: true  
  
     - name : remove  masters IP from known_hosts file
       command: /usr/bin/ssh-keygen -R {{ hostvars[item]['ip'] }}
       with_items:
         - "{{ groups['masters'] }}"
- 
+      ignore_errors: true  
+      
     - name: Create and launch masters
       command: "{{ gcloudbin }} compute --project {{ project }} instances create {{ hostvars[item].inventory_hostname }}
              --zone {{ zone }} --machine-type {{ master_machine_type }} --subnet {{ subnet }}
-             --private-network-ip  {{ hostvars[item]['ip'] }} --maintenance-policy "MIGRATE"  --tags \"master\"
+             --private-network-ip  {{ hostvars[item]['ip'] }} --maintenance-policy \"MIGRATE\"  --tags \"master\"
              --scopes default=https://www.googleapis.com/auth/cloud-platform --image {{ image }}
              --boot-disk-size {{ master_boot_disk_size }} --boot-disk-type {{ master_boot_disk_type }}
              --boot-disk-device-name {{ hostvars[item].inventory_hostname }}-boot"

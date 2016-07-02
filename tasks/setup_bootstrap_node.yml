@@ -13,7 +13,7 @@
       register: dcos_installer_state
 
     - name: get dcos installer
-      get_url: url={{ dcos_installer_download_path }} dest=~ mode="u=rwx,g=rwx,o=rwx"
+      get_url: url={{ dcos_installer_download_path }} dest={{ home_directory }} mode="u=rwx,g=rwx,o=rwx"
       when: dcos_installer_state.stat.islnk is not defined
 
     - name: stop docker

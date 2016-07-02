@@ -10,50 +10,139 @@ A bootstrap node is required to run the scripts and to bootstrap the DC/OS clust
 
 **YOU MUST CREATE A PROJECT** using the google cloud console. The author created a project called trek-treckr
 
-You can create the bootstrap node using the google cloud console. The author used a f1-micro instance running centos with a 50 GB persistent disk in 
-zone europe-west1-d.
+You can create the bootstrap node using the google cloud console. The author used a n1-standard-1 instance running centos 7 with a 10 GB persistent disk in 
+zone europe-west1-c. The bootstrap node must have "Allow full access to all Cloud APIs" in the Identity and API access section. Also enable Block project-wide SSH keys in the SSH Keys section. Create the instance.
 
 After creating the micro instance start the instance and run the following from the shell
 ```bash
 gcloud components update
 sudo yum update
+sudo yum install epel-release
 sudo yum install python-pip
 sudo pip install -U pip
-sudo pip install apache-libcloud docker-py ansible
+sudo pip install apache-libcloud
+sudo pip install docker-py
+sudo yum install git ansible
 ```
 
-You need to create the rsa public/private keypairs to allow passwordless logins via SSH to the nodes of the DC/OS cluster. This is required by ansible to create the cluster nodes and 
-install DC/OS on the nodes.
+You need to create the rsa public/private keypairs to allow passwordless logins via SSH to the nodes of the DC/OS cluster. This is required by ansible to create the cluster nodes and install DC/OS on the nodes.
 
 Run the following to generate the keys
 ```bash
 ssh-keygen -t rsa -f ~/.ssh/id_rsa -C ajazam
 ```
-**PLEASE REPLACE ajazam** with your username
+**PLEASE REPLACE ajazam** with your username. Do not eneter a password when prompted
+
+Make a backup copy of id_rsa.pub.
+
+Open rsa pub key
+```bash
+vi ~/.ssh/id_rsa.pub
+```
+
+shows
+
+```bash
+ssh-rsa abcdefghijklmaasnsknsdjfsdfjs;dfj;sdflkjsd ajazam
+```
+Prefix your username, followed by a colon, to the above line. Also replace ajazam at the end with your username.
+
+```bash
+ajazam:ssh-rsa abcdefghijklmaasnsknsdjfsdfjs;dfj;sdflkjsd ajazam
+```
+save contents of id_rsa.pub. **Please replace the ajazam with your username**. 
+
+
 
 Add the rsa public key to your project
 ```bash
 chmod 400 ~/.ssh/id_rsa
 gcloud compute project-info add-metadata --metadata-from-file sshKeys=~/.ssh/id_rsa.pub
 ```
-Install docker
+
+Disable selinux for docker to work
+
+make the following change to /etc/selinux/config
+
 ```bash
-curl -fsSL https://get.docker.com/ | sh
-sudo usermod -aG docker ajazam
+SELINUX=disabled
 ```
-**PLEASE REPLACE ajazam** with your username
+
+reboot host
+
+To install docker add the yum repo
+
+```bash
+sudo tee /etc/yum.repos.d/docker.repo <<-'EOF'
+[dockerrepo]
+name=Docker Repository
+baseurl=https://yum.dockerproject.org/repo/main/centos/7/
+enabled=1
+gpgcheck=1
+gpgkey=https://yum.dockerproject.org/gpg
+EOF
+```
+
+install the docker package
+```bash
+sudo yum install docker-engine
+```
+
+Add following changes to /usr/lib/systemd/system/docker.service
+
+```bash
+ExecStart=/usr/bin/docker daemon -H fd:// --graph="/mnt/docker-data" --storage-driver=overlay
+```
+
+reload systemd
+
+```bash
+sudo systemctl daemon-reload
+```
 
 Start docker
 ```bash
-sudo service docker start
+sudo systemctl start docker.service
 ```
+
+Verify if docker works
+
+```bash
+sudo docker run hello-world
+```
+
+
+download the dcos-gce scripts
+```bash
+git clone https://github.com/ajazam/dcos-gce
+```
+
+change directory
+```bash
+cd dce-gce
+```
+
+Please make appropriate changes to dcos/gce/group_vars/all
+
+insert following into ~/.ansible.cfg to stop host key checking
+```bash
+[defaults]
+host_key_checking = False
+
+[paramiko_connection]
+record_host_keys = False
+
+[ssh_connection]
+ssh_args = -o ControlMaster=auto -o ControlPersist=60s -o UserKnownHostsFile=/dev/null
+```
+
 To create and configure the master nodes run
 ```bash
 ansible-playbook -i hosts install.yml
 ```
 To create and configure the private nodes run
 ```bash
-ansible-playbook -i hosts add_agent --extra-vars "start_id=0001 end_id=0002 agent_type=private"
+ansible-playbook -i hosts add_agents.yml --extra-vars "start_id=0001 end_id=0002 agent_type=private"
 ```
 start_id=0001 and end_id=0002 specify the range of id's that are appended to the hostname "agent" to create unique agent names. If start_id is not specified then a default of 0001 is used. 
 If the end_id is not specified then a default of 0001 is used.
@@ -61,7 +150,7 @@ The values for agent_type are either private or public. If an agent_type is not 
 
 To create public nodes type
 ```bash
-ansibe-playbook -i hosts add_agent --extra-vars "start_id=0003 end_id=0004 agent_type=public"
+ansibe-playbook -i hosts add_agents.yml --extra-vars "start_id=0003 end_id=0004 agent_type=public"
 ```
 ##Configurable parameters
 
@@ -81,7 +170,7 @@ File './group_vars/all' contains miscellaneous parameters that will change the b
 ```text
 project
 ```
-Your your project name. Default: trek-trackr
+Your project id. Default: trek-trackr
 
 ```text
 subnet

@@ -36,7 +36,7 @@ end_id: 0001
 
 
 
-gcloudbin: /usr/local/bin/gcloud
+gcloudbin: /usr/bin/gcloud
 
 image: '/centos-cloud/centos-7-v20160606'
 

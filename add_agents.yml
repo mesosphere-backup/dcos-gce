@@ -9,6 +9,7 @@
     - name: remove agents from known_hosts file
       command: /usr/bin/ssh-keygen -R {{ item }} 
       with_sequence: start={{ start_id }} end={{ end_id }} format=agent%04x
+      ignore_errors: true
 
     - name: launch agent instances
       command: "{{ gcloudbin }} compute --project {{ project }} instances create {{ item }} --zone {{ zone }} --machine-type {{ agent_machine_type }} 
