@@ -122,7 +122,7 @@ change directory
 cd dcos-gce
 ```
 
-Please make appropriate changes to dcos/gce/group_vars/all. You need to review project, subnet, login_name, bootstrap_public_ip & zone
+Please make appropriate changes to dcos_gce/group_vars/all. You need to review project, subnet, login_name, bootstrap_public_ip & zone
 
 insert following into ~/.ansible.cfg to stop host key checking
 ```bash
