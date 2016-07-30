@@ -136,6 +136,8 @@ record_host_keys = False
 ssh_args = -o ControlMaster=auto -o ControlPersist=60s -o UserKnownHostsFile=/dev/null
 ```
 
+Ensure the IP address for master0 in ./hosts is the next consecutive IP from bootstrap_public_ip.
+
 To create and configure the master nodes run
 ```bash
 ansible-playbook -i hosts install.yml
