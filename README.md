@@ -13,9 +13,9 @@ A bootstrap node is required to run the scripts and to bootstrap the DC/OS clust
 You can create the bootstrap node using the google cloud console. The author used a n1-standard-1 instance running centos 7 with a 10 GB persistent disk in 
 zone europe-west1-c. The bootstrap node must have "Allow full access to all Cloud APIs" in the Identity and API access section. Also enable Block project-wide SSH keys in the SSH Keys section. Create the instance.
 
-After creating the micro instance start the instance and run the following from the shell
+After creating the boot instance run the following from the shell
 ```bash
-gcloud components update
+sudo gcloud components update
 sudo yum update
 sudo yum install epel-release
 sudo yum install python-pip
@@ -37,7 +37,7 @@ Make a backup copy of id_rsa.pub.
 
 Open rsa pub key
 ```bash
-vi ~/.ssh/id_rsa.pub
+sudo vi ~/.ssh/id_rsa.pub
 ```
 
 shows
