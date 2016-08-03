@@ -91,7 +91,7 @@ sudo yum install docker-engine
 Add following changes to /usr/lib/systemd/system/docker.service
 
 ```bash
-ExecStart=/usr/bin/docker daemon -H fd:// --graph="/mnt/docker-data" --storage-driver=overlay
+ExecStart=/usr/bin/dockerd --storage-driver=overlay
 ```
 
 reload systemd
