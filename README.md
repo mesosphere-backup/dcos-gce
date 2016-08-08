@@ -15,7 +15,7 @@ zone europe-west1-c. The bootstrap node must have "Allow full access to all Clou
 
 After creating the boot instance run the following from the shell
 ```bash
-sudo gcloud components update
+gcloud components update
 sudo yum update
 sudo yum install epel-release
 sudo yum install python-pip
