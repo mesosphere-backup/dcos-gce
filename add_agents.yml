@@ -35,6 +35,9 @@
   become_user: root
   connection: local
   tasks:
+    - name: start docker
+      service: name=docker state=started 
+
     - name: ensure dcos installer container is started
       docker_container:
         name: "{{ dcos_bootstrap_container }}"
