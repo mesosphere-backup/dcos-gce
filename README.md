@@ -21,7 +21,7 @@ sudo yum install epel-release
 sudo yum install python-pip
 sudo pip install -U pip
 sudo pip install apache-libcloud
-sudo pip install docker-py
+sudo pip install 'docker-py==1.9.0'
 sudo yum install git ansible
 ```
 
