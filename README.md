@@ -15,7 +15,7 @@ zone europe-west1-c. The bootstrap node must have "Allow full access to all Clou
 
 After creating the boot instance run the following from the shell
 ```bash
-gcloud components update
+sudo gcloud components update
 sudo yum update
 sudo yum install epel-release
 sudo yum install python-pip
@@ -85,13 +85,13 @@ EOF
 
 install the docker package
 ```bash
-sudo yum install docker-engine
+sudo yum install docker-engine-1.11.2
 ```
 
 Add following changes to /usr/lib/systemd/system/docker.service
 
 ```bash
-ExecStart=/usr/bin/dockerd --storage-driver=overlay
+ExecStart=/usr/bin/docker daemon -H fd:// --graph="/mnt/docker-data" --storage-driver=overlay
 ```
 
 reload systemd

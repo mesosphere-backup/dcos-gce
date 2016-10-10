@@ -36,7 +36,7 @@
     - pause: seconds=1
 
     - name: install docker
-      yum: name=docker-engine state=present
+      yum: name=docker-engine-1.11.2 state=present
 
     - name: copy docker config for overlayfs
       copy: src=files/docker.service dest=/usr/lib/systemd/system
