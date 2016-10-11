@@ -97,7 +97,7 @@
       command: /usr/bin/systemctl daemon-reload
 
     - name: start docker
-      service: name=docker state=started
+      service: name=docker state=started enabled=true
 
 # following needs to have serial: 2
     - name: fetch installer from bootstrap
