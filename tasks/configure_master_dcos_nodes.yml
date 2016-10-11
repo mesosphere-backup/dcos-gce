@@ -7,6 +7,10 @@
       with_items:
         - unzip
         - ipset
+        - ntp
+
+    - name: enable ntpd
+      service: name=ntpd state=started enabled=yes    
 
     - name: add group nogroup
       group: name=nogroup state=present
