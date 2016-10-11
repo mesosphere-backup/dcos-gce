@@ -14,14 +14,14 @@ zone: europe-west1-d
 
 master_boot_disk_size: 10
 
-master_machine_type: n1-standard-1
+master_machine_type: n2-standard-1
 
 master_boot_disk_type: pd-standard
 
 
 agent_boot_disk_size: 10
 
-agent_machine_type: n1-standard-1
+agent_machine_type: n2-standard-1
 
 agent_boot_disk_type: pd-standard
 
