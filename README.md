@@ -22,7 +22,7 @@ sudo yum install python-pip
 sudo pip install -U pip
 sudo pip install 'apache-libcloud==1.2.1'
 sudo pip install 'docker-py==1.9.0'
-sudo yum install git-1.8.3.1 ansible-2.1.1
+sudo yum install git-1.8.3.1 ansible-2.1.1.0
 ```
 
 You need to create the rsa public/private keypairs to allow passwordless logins via SSH to the nodes of the DC/OS cluster. This is required by ansible to create the cluster nodes and install DC/OS on the nodes.
