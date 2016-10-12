@@ -20,9 +20,9 @@ sudo yum update
 sudo yum install epel-release
 sudo yum install python-pip
 sudo pip install -U pip
-sudo pip install apache-libcloud
+sudo pip install 'apache-libcloud=1.2.1'
 sudo pip install 'docker-py==1.9.0'
-sudo yum install git ansible
+sudo yum install git-1.8.3.1 ansible-2.1.1
 ```
 
 You need to create the rsa public/private keypairs to allow passwordless logins via SSH to the nodes of the DC/OS cluster. This is required by ansible to create the cluster nodes and install DC/OS on the nodes.
@@ -91,7 +91,7 @@ sudo yum install docker-engine-1.11.2
 Add following changes to /usr/lib/systemd/system/docker.service
 
 ```bash
-ExecStart=/usr/bin/docker --storage-driver=overlay
+ExecStart=/usr/bin/docker daemon --storage-driver=overlay
 ```
 
 reload systemd
@@ -205,7 +205,7 @@ The size of the master node boot disk. Default 10 GB
 ```text
 master_machine_type
 ```
-The GCE instance type used for the master nodes. Default: n1-standard-1
+The GCE instance type used for the master nodes. Default: n1-standard-2
 
 ```text
 master_boot_disk_type
@@ -220,7 +220,7 @@ The size of the agent boot disk. Default 10 GB
 ```text
 agent_machine_type
 ```
-The GCE instance type used for the agent nodes. Default: n1-standard-1
+The GCE instance type used for the agent nodes. Default: n1-standard-2
 
 ```text
 agent_boot_disk_type
@@ -281,7 +281,7 @@ The filename for the DC/OS installer. Default dcos_generate_config.sh
 ```text
 dcos_installer_download_path
 ```
-The location of where the dcos installer is available from dcos.io. Default: https://downloads.dcos.io/dcos/EarlyAccess/{{ dcos_installer_filename }} The value of {{ dcos_installer_file }} is described above.
+The location of where the dcos installer is available from dcos.io. Default: https://downloads.dcos.io/dcos/stable/{{ dcos_installer_filename }} The value of {{ dcos_installer_file }} is described above.
 
 ```text
 home_directory

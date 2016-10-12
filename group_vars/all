@@ -14,14 +14,14 @@ zone: europe-west1-d
 
 master_boot_disk_size: 10
 
-master_machine_type: n2-standard-1
+master_machine_type: n1-standard-2
 
 master_boot_disk_type: pd-standard
 
 
 agent_boot_disk_size: 10
 
-agent_machine_type: n2-standard-1
+agent_machine_type: n1-standard-2
 
 agent_boot_disk_type: pd-standard
 
@@ -38,7 +38,7 @@ end_id: 0001
 
 gcloudbin: /usr/bin/gcloud
 
-image: '/centos-cloud/centos-7-v20160606'
+image: '/centos-cloud/centos-7-v20160921'
 
 bootstrap_public_port: 8080
 
@@ -48,7 +48,7 @@ scopes: "default=https://www.googleapis.com/auth/cloud-platform"
 
 dcos_installer_filename: dcos_generate_config.sh
 
-dcos_installer_download_path: "https://downloads.dcos.io/dcos/EarlyAccess/{{ dcos_installer_filename }}"
+dcos_installer_download_path: "https://downloads.dcos.io/dcos/stable/{{ dcos_installer_filename }}"
 
 home_directory: "/home/{{ login_name }}"
 

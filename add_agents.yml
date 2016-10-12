@@ -13,7 +13,7 @@
 
     - name: launch agent instances
       command: "{{ gcloudbin }} compute --project {{ project }} instances create {{ item }} --zone {{ zone }} --machine-type {{ agent_machine_type }} 
-               --subnet {{ subnet }}  --maintenance-policy \"TERMINATE\" --preemptible --tags \"{{agent_type}}agent\" --scopes {{ scopes }} 
+               --subnet {{ subnet }}  --maintenance-policy {{ agent_instance_type }} --tags \"{{agent_type}}agent\" --scopes {{ scopes }} 
                --image {{ image }} --boot-disk-size {{ agent_boot_disk_size }} 
                --boot-disk-type {{ agent_boot_disk_type }} --boot-disk-device-name boot"
       with_sequence: start={{ start_id }} end={{ end_id }} format=agent%04x
@@ -61,7 +61,7 @@
         - ipset
         - ntp
 
-    - name: enable ntpd
+    - name: install ntpd
       service: name=ntpd state=started enabled=yes       
 
     - name: add group nogroup
@@ -92,7 +92,7 @@
     - pause: seconds=1
 
     - name: install docker
-      yum: name=docker-engine state=present
+      yum: name=docker-engine-1.11.2 state=present
 
     - name: copy docker config for overlayfs
       copy: src=files/docker.service dest=/usr/lib/systemd/system
@@ -101,7 +101,7 @@
       command: /usr/bin/systemctl daemon-reload
 
     - name: start docker
-      service: name=docker state=started enabled=true
+      service: name=docker state=started enabled=yes
 
 # following needs to have serial: 2
     - name: fetch installer from bootstrap

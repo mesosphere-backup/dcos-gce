@@ -9,7 +9,7 @@
         - ipset
         - ntp
 
-    - name: enable ntpd
+    - name: install ntpd
       service: name=ntpd state=started enabled=yes    
 
     - name: add group nogroup
