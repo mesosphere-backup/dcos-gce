@@ -20,7 +20,7 @@ sudo yum update
 sudo yum install epel-release
 sudo yum install python-pip
 sudo pip install -U pip
-sudo pip install 'apache-libcloud=1.2.1'
+sudo pip install 'apache-libcloud==1.2.1'
 sudo pip install 'docker-py==1.9.0'
 sudo yum install git-1.8.3.1 ansible-2.1.1
 ```
