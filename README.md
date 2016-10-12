@@ -177,7 +177,7 @@ Your project id. Default: trek-trackr
 ```text
 subnet
 ```
-Your network. Default: default-6f68d4d6fabcb680
+Your network. Default: default
 
 ```text
 login_name
