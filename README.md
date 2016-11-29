@@ -148,6 +148,11 @@ ansible-playbook -i hosts add_agents.yml --extra-vars "start_id=0001 end_id=0002
 ```
 start_id=0001 and end_id=0002 specify the range of id's that are appended to the hostname "agent" to create unique agent names. If start_id is not specified then a default of 0001 is used. 
 If the end_id is not specified then a default of 0001 is used.
+
+*When specifying start_id or end_id via CLI, the leading zeroes must be dropped for any agent id higher than 7* or ansible will throw a format error.
+```bash
+ansible-playbook -i hosts add_agents.yml --extra-vars "start_id=0006 end_id=10 agent_type=private"
+```
 The values for agent_type are either private or public. If an agent_type is not specified then it is assumed agent_type is private.
 
 To create public nodes type
