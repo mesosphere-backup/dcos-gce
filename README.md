@@ -114,7 +114,7 @@ sudo docker run hello-world
 
 download the dcos-gce scripts
 ```bash
-git clone https://github.com/ajazam/dcos-gce
+git clone https://github.com/dcos-labs/dcos-gce
 ```
 
 change directory
