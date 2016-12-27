@@ -197,7 +197,7 @@ The bootstrap nodes public IP. Default: 10.132.0.2
 ```text
 zone
 ```
-You may change this to your preferred zone. Default: europe-west1-d
+You may change this to your preferred zone. Default: europe-west1-c
 
 
 ###Group 2 parameters which optionally change the behaviour of the installation scripts
