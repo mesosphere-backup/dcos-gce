@@ -38,7 +38,9 @@ end_id: 0001
 
 gcloudbin: /usr/bin/gcloud
 
-image: '/centos-cloud/centos-7-v20161027'
+image: 'centos-7-v20161027'
+
+image_project: 'centos-cloud'
 
 bootstrap_public_port: 8080
 
