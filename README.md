@@ -33,7 +33,7 @@ ssh-keygen -t rsa -f ~/.ssh/id_rsa -C ajazam
 ```
 **PLEASE REPLACE ajazam** with your username. Do not eneter a password when prompted
 
-Make a backup copy of id_rsa.pub.
+Make a backup copy of id_rsa.
 
 Open rsa pub key
 ```bash
