@@ -31,7 +31,7 @@ Run the following to generate the keys
 ```bash
 ssh-keygen -t rsa -f ~/.ssh/id_rsa -C ajazam
 ```
-**PLEASE REPLACE ajazam** with your username. Do not eneter a password when prompted
+**PLEASE REPLACE ajazam** with your username. Do not enter a password when prompted
 
 Make a backup copy of id_rsa.
 
