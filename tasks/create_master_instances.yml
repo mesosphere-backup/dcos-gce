@@ -16,7 +16,7 @@
       command: "{{ gcloudbin }} compute --project {{ project }} instances create {{ hostvars[item].inventory_hostname }}
              --zone {{ zone }} --machine-type {{ master_machine_type }} --subnet {{ subnet }}
              --private-network-ip  {{ hostvars[item]['ip'] }} --maintenance-policy \"MIGRATE\"  --tags \"master\"
-             --scopes default=https://www.googleapis.com/auth/cloud-platform --image {{ image }} --image-project {{ image_project }}
+             --scopes https://www.googleapis.com/auth/cloud-platform --image {{ image }} --image-project {{ image_project }}
              --boot-disk-size {{ master_boot_disk_size }} --boot-disk-type {{ master_boot_disk_type }}
              --boot-disk-device-name {{ hostvars[item].inventory_hostname }}-boot --metadata hostname={{ hostvars[item].inventory_hostname }}"
       with_items:

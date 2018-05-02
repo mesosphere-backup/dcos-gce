@@ -46,7 +46,7 @@ bootstrap_public_port: 8080
 
 cluster_name: cluster_name
 
-scopes: "default=https://www.googleapis.com/auth/cloud-platform"
+scopes: "https://www.googleapis.com/auth/cloud-platform"
 
 dcos_installer_filename: dcos_generate_config.sh
 
