@@ -19,6 +19,7 @@ sudo yum update google-cloud-sdk
 sudo yum update
 sudo yum install epel-release
 sudo yum install python-pip
+sydu yum install git
 sudo pip install -U pip
 sudo pip install 'apache-libcloud==1.2.1'
 sudo pip install 'docker-py==1.9.0'
